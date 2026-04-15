@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  TextInput, ActivityIndicator,
+  TextInput, ActivityIndicator, Image,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import DashboardHeader from '../components/DashboardHeader';
@@ -274,7 +274,19 @@ export default function DashboardScreen({ route, navigation }) {
                     onPress={() => handleStoreTap(store)}
                     activeOpacity={0.75}
                   >
-                    <Text style={styles.storeText}>{store.name}</Text>
+                    {/* Thumbnail */}
+                    {Array.isArray(store.site_images) && store.site_images.length > 0 ? (
+                      <Image
+                        source={{ uri: store.site_images[0] }}
+                        style={styles.storeThumbnail}
+                        resizeMode="cover"
+                      />
+                    ) : (
+                      <View style={[styles.storeThumbnail, styles.storeThumbnailEmpty]}>
+                        <Text style={{ fontSize: 18 }}>🏢</Text>
+                      </View>
+                    )}
+                    <Text style={styles.storeText} numberOfLines={1}>{store.name}</Text>
                     <MaterialIcons name="chevron-right" size={18} color="#bbb" />
                   </TouchableOpacity>
                 ))
@@ -394,8 +406,7 @@ const styles = StyleSheet.create({
   storeItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 13,
+    paddingVertical: 10,
     paddingHorizontal: 12,
     borderBottomWidth: 1,
     borderColor: '#f0f0f0',
@@ -403,6 +414,12 @@ const styles = StyleSheet.create({
     borderLeftWidth: 3,
     borderLeftColor: 'transparent',
     marginBottom: 2,
+  },
+  storeThumbnail: {
+    width: 48, height: 48, borderRadius: 8, marginRight: 10,
+  },
+  storeThumbnailEmpty: {
+    backgroundColor: '#f0f0f0', alignItems: 'center', justifyContent: 'center',
   },
   storeText: { fontSize: 14, color: '#333', flex: 1 },
   emptyText: { fontSize: 13, color: '#aaa', textAlign: 'center', paddingVertical: 20 },

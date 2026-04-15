@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
-  TouchableOpacity, ActivityIndicator,
+  TouchableOpacity, ActivityIndicator, Image, Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DashboardHeader from '../components/DashboardHeader';
@@ -83,6 +83,39 @@ export default function StoreDetailScreen({ route, navigation }) {
             </View>
           )}
         </View>
+
+        {/* ── Image Gallery ──────────────────────────────────── */}
+        {Array.isArray(store.site_images) && store.site_images.length > 0 && (
+          <View style={styles.gallerySection}>
+            <Text style={styles.sectionLabel}>🖼️  Site Photos</Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.galleryScroll}
+              contentContainerStyle={{ paddingRight: 16 }}
+            >
+              {store.site_images.map((uri, idx) => (
+                <Image
+                  key={idx}
+                  source={{ uri }}
+                  style={styles.galleryImage}
+                  resizeMode="cover"
+                />
+              ))}
+            </ScrollView>
+          </View>
+        )}
+
+        {/* ── Map Location button ─────────────────────────────── */}
+        {!!store.site_location && (
+          <TouchableOpacity
+            style={styles.mapBtn}
+            onPress={() => Linking.openURL(store.site_location).catch(() => {})}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.mapBtnText}>🗺️  View Map Location</Text>
+          </TouchableOpacity>
+        )}
 
         {/* ── Detail rows ─────────────────────────────────── */}
         <View style={styles.card}>
@@ -248,4 +281,24 @@ const styles = StyleSheet.create({
     borderRadius: 8, borderLeftWidth: 4, borderLeftColor: '#E62B4A',
   },
   deleteErrorText: { fontSize: 12, color: '#C62828' },
+
+  // ── Image Gallery ─────────────────────────────────────
+  gallerySection: {
+    backgroundColor: '#fff', borderRadius: 14, padding: 14, marginBottom: 14,
+    shadowColor: '#000', shadowOpacity: 0.05, shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6, elevation: 2,
+  },
+  sectionLabel: { fontSize: 12, fontWeight: '800', color: '#555', marginBottom: 10, textTransform: 'uppercase', letterSpacing: 0.5 },
+  galleryScroll: { flexDirection: 'row' },
+  galleryImage:  { width: 160, height: 110, borderRadius: 10, marginRight: 10 },
+
+  // ── Map button ────────────────────────────────────────
+  mapBtn: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    backgroundColor: '#1a73e8', borderRadius: 12, paddingVertical: 14,
+    marginBottom: 14,
+    shadowColor: '#1a73e8', shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 3 }, shadowRadius: 6, elevation: 3,
+  },
+  mapBtnText: { fontSize: 15, fontWeight: '700', color: '#fff' },
 });
