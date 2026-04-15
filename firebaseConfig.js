@@ -6,13 +6,13 @@ import { getAuth } from "firebase/auth";
 import { Platform } from "react-native";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDu3cXJk7MUPyZPqaFkk605VOcro7dKSko",
-  authDomain: "testing-anirban.firebaseapp.com",
-  projectId: "testing-anirban",
-  storageBucket: "testing-anirban.firebasestorage.app",
-  messagingSenderId: "680180840921",
-  appId: "1:680180840921:web:85d7ac5c49a0a4416b41c8",
-  measurementId: "G-438TPE1XMS",
+  apiKey: "",
+  authDomain: "",
+  projectId: "",
+  storageBucket: "",
+  messagingSenderId: "",
+  appId: "",
+  measurementId: "",
 };
 
 // ── Init app (safe for hot-reload) ────────────────────────────────────────────
