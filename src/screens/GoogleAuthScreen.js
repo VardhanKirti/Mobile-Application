@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import {
   View, Text, TouchableOpacity, StyleSheet, Image,
@@ -6,68 +5,62 @@ import {
   Alert
 } from 'react-native';
 import { useAuth } from '../context/AuthContext';
-import * as WebBrowser from 'expo-web-browser';
-import * as Google from 'expo-auth-session/providers/google';
-import { makeRedirectUri } from 'expo-auth-session';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 // Import Cultfit logo
 const cultfitLogo = require('../../cultfit.jpg');
-
-WebBrowser.maybeCompleteAuthSession();
 
 export default function GoogleAuthScreen() {
   const { googleLogin } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Google Auth configuration
-  // Web Client ID from Firebase (same for all platforms)
+  // INDUSTRY STANDARD: Use the Web Client ID for configuration
   const WEB_CLIENT_ID = '680180840921-bf7fdo87i3secg5dbkris5uhkfj7ped8.apps.googleusercontent.com';
 
-  // PRODUCTION FIX: Use proxy for development, direct URI for production
-  // 2. Android Client ID (CREATE THIS AS AN "ANDROID" TYPE IN GOOGLE CONSOLE)
-  // Use Package Name: host.exp.exponent
-  // Use SHA-1: 28:BA:AD:92:4B:32:04:E6:91:9A:8B:5B:C9:F6:4E:91:0D:37:69:30
-  // 2. Android Client ID (Native Android app - Expo Go)
-  const ANDROID_CLIENT_ID = '680180840921-4n1fc31stluce98tm9ot8pu3ump942cf.apps.googleusercontent.com';
-
-  const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
-    clientId: WEB_CLIENT_ID,
-    androidClientId: ANDROID_CLIENT_ID,
-    webClientId: WEB_CLIENT_ID,
-  });
-
   useEffect(() => {
-    if (response?.type === 'success') {
-      const { id_token } = response.params;
-      handleGoogleLogin(id_token);
-    } else if (response?.type === 'error') {
-      console.error('[Google Auth Error]', response.error);
-      setError(`Auth Error: ${response.error.message || 'Check your Google Console Redirect URIs'}`);
-    }
-  }, [response]);
-
-  const handleGoogleLogin = async (idToken) => {
-    try {
-      setLoading(true);
-      setError(null);
-      await googleLogin(idToken);
-    } catch (e) {
-      console.error('[Firebase Login Error]', e);
-      setError('Firebase failed to verify token. Make sure Google is enabled in Firebase Auth!');
-    } finally {
-      setLoading(false);
-    }
-  };
+    GoogleSignin.configure({
+      webClientId: WEB_CLIENT_ID,
+      offlineAccess: true,
+      forceCodeForRefreshToken: true,
+    });
+  }, []);
 
   const handleSignIn = async () => {
     try {
       setLoading(true);
       setError(null);
-      await promptAsync();
+      
+      // Check if Google Play Services are available
+      await GoogleSignin.hasPlayServices();
+      
+      // Open the NATIVE account picker
+      const userInfo = await GoogleSignin.signIn();
+      const idToken = userInfo.data.idToken;
+
+      if (!idToken) {
+        throw new Error('No ID Token received from Google');
+      }
+
+      // Pass the token to our AuthContext (Firebase)
+      await googleLogin(idToken);
+      
     } catch (e) {
-      console.error('[Prompt Error]', e);
-      setError(`Login failed: ${e.message}`);
+      console.error('[Native Google Error]', e);
+      let errorMsg = 'Google Sign-In failed.';
+      
+      if (e.code === 'SIGN_IN_CANCELLED') {
+        errorMsg = 'Sign-in cancelled.';
+      } else if (e.code === 'IN_PROGRESS') {
+        errorMsg = 'Sign-in already in progress.';
+      } else if (e.code === 'PLAY_SERVICES_NOT_AVAILABLE') {
+        errorMsg = 'Google Play Services not available.';
+      } else {
+        errorMsg = `Error: ${e.message}`;
+      }
+      
+      setError(errorMsg);
+    } finally {
       setLoading(false);
     }
   };
@@ -93,7 +86,7 @@ export default function GoogleAuthScreen() {
         <View style={styles.card}>
           <Text style={styles.welcomeText}>Official Access</Text>
           <Text style={styles.infoText}>
-            Please sign in with your corporate or personal Google account.
+            Sign in with your official Google account to access real-time property data.
           </Text>
 
           {/* Error Message */}
@@ -103,11 +96,11 @@ export default function GoogleAuthScreen() {
             </View>
           )}
 
-          {/* Google Sign In Button */}
+          {/* Native Google Sign In Button */}
           <TouchableOpacity
             style={[styles.googleButton, loading && styles.buttonDisabled]}
             onPress={handleSignIn}
-            disabled={loading || !request}
+            disabled={loading}
             activeOpacity={0.85}
           >
             {loading ? (
@@ -121,6 +114,7 @@ export default function GoogleAuthScreen() {
               </>
             )}
           </TouchableOpacity>
+ity>
 
           {/* Role Info */}
           <View style={styles.roleInfoContainer}>

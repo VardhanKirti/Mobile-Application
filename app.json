@@ -22,14 +22,29 @@
         "backgroundColor": "#FFD700"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.curefit.propmanager"
+      "package": "com.curefit.propmanager",
+      "versionCode": 1,
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
     },
     "plugins": [
-      "expo-web-browser"
+      "expo-web-browser",
+      "@react-native-google-signin/google-signin"
     ]
+,
+    "extra": {
+      "eas": {
+        "projectId": "e4acc725-f7bf-47df-bee4-92eceabc7677"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/e4acc725-f7bf-47df-bee4-92eceabc7677"
+    }
   }
 }

@@ -13,14 +13,6 @@ import { auth, db } from '../../firebaseConfig';
 
 const AuthContext = createContext(null);
 
-// ── Admin Whitelist ───────────────────────────────────────────────────────
-// Add email addresses here that should have full admin privileges.
-// All other users will receive "viewer" (read-only) access by default.
-const ADMIN_EMAILS = [
-  'admin@example.com',
-  'kirti.sharma@curefit.com',
-  'anirban@curefit.com',
-];
 
 export function AuthProvider({ children }) {
   const [user,    setUser]    = useState(null);
@@ -33,25 +25,43 @@ export function AuthProvider({ children }) {
       if (firebaseUser) {
         setUser(firebaseUser);
         
-        // Check if user is in admin whitelist
-        const userEmail = firebaseUser.email?.toLowerCase();
-        const isAdminEmail = ADMIN_EMAILS.includes(userEmail);
-        const assignedRole = isAdminEmail ? 'admin' : 'viewer';
-        
-        setRole(assignedRole);
-
-        // Optional: Sync with Firestore for tracking users
         try {
-          const ref = doc(db, 'users', firebaseUser.uid);
-          await setDoc(ref, {
+          // Default to viewer while checking
+          setRole('viewer');
+          
+          const adminRef = doc(db, 'app_config', 'admins');
+          const adminSnap = await getDoc(adminRef);
+          
+          if (adminSnap.exists()) {
+            const data = adminSnap.data();
+            const userEmail = firebaseUser.email?.toLowerCase().trim();
+            const rawEmails = data.emails || [];
+            
+            const adminList = Array.isArray(rawEmails) ? rawEmails : [rawEmails];
+            const lowerCaseAdmins = adminList.map(e => String(e).toLowerCase().trim());
+            
+            if (lowerCaseAdmins.includes(userEmail)) {
+              setRole('admin');
+              console.log('[Auth] Logged in as ADMIN:', userEmail);
+            } else {
+              console.log('[Auth] Logged in as VIEWER:', userEmail);
+            }
+          }
+
+
+          // Sync user profile
+          const userRef = doc(db, 'users', firebaseUser.uid);
+          await setDoc(userRef, {
             email: firebaseUser.email,
             name: firebaseUser.displayName || '',
             photoURL: firebaseUser.photoURL || '',
-            role: assignedRole, // Store the assigned role
+            role: assignedRole,
             lastLogin: new Date().toISOString(),
           }, { merge: true });
-        } catch (_err) {
-          console.log('[Auth] Could not sync user doc, continuing with local role');
+
+        } catch (e) {
+          console.error('[Auth] Error syncing role:', e);
+          setRole('viewer'); // Fail safe to viewer
         }
       } else {
         setUser(null);
@@ -61,6 +71,7 @@ export function AuthProvider({ children }) {
     });
     return unsub;
   }, []);
+
 
 
   // ── Auth Actions ─────────────────────────────────────────────────────────

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "680180840921",
+    "project_id": "testing-anirban",
+    "storage_bucket": "testing-anirban.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:680180840921:android:8e508715c158e7706b41c8",
+        "android_client_info": {
+          "package_name": "com.curefit.propmanager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "680180840921-bf7fdo87i3secg5dbkris5uhkfj7ped8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMLMbmebWjlBDDqdAYBdzxrolc8-ZgYag"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "680180840921-bf7fdo87i3secg5dbkris5uhkfj7ped8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
