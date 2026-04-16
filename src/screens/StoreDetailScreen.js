@@ -36,7 +36,8 @@ const fmt = (val, { currency, number, suffix } = {}) => {
 };
 
 export default function StoreDetailScreen({ route, navigation }) {
-  const { store: initialStore, accentColor = '#E62B4A' } = route.params;
+  const { store: initialStore } = route.params;
+  const accentColor = '#FFD700';
   const [store, setStore] = useState(initialStore);
   const { isAdmin } = useAuth();
   const [deleting,       setDeleting]       = useState(false);
@@ -194,75 +195,64 @@ export default function StoreDetailScreen({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
-  safe:    { flex: 1, backgroundColor: '#f5f6fa' },
+  safe:    { flex: 1, backgroundColor: '#000000' },
   scroll:  { flex: 1 },
   content: { padding: 16, paddingBottom: 40 },
 
   badge: {
-    backgroundColor: '#fff',
+    backgroundColor: '#1A1A1A',
     borderRadius: 14,
     borderLeftWidth: 5,
+    borderColor: '#333333',
     padding: 18,
     marginBottom: 14,
-    shadowColor: '#000',
-    shadowOpacity: 0.06,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 6,
-    elevation: 2,
+    borderWidth: 1,
   },
   badgeName: { fontSize: 20, fontWeight: '800', marginBottom: 4 },
-  badgeSub:  { fontSize: 13, color: '#888' },
+  badgeSub:  { fontSize: 13, color: '#888888' },
 
   adminBadge: {
     marginTop: 10,
     alignSelf: 'flex-start',
-    backgroundColor: '#FFF3CD',
+    backgroundColor: 'rgba(255, 215, 0, 0.15)',
     borderRadius: 6,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderWidth: 1,
-    borderColor: '#FBBF24',
+    borderColor: '#FFD700',
   },
-  adminBadgeText: { fontSize: 12, color: '#92400E', fontWeight: '700' },
+  adminBadgeText: { fontSize: 12, color: '#FFD700', fontWeight: '700' },
 
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: '#1A1A1A',
     borderRadius: 14,
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 6,
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: '#333333',
   },
-  row:      { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 13, borderBottomWidth: 1, borderColor: '#f2f2f2' },
-  rowAlt:   { backgroundColor: '#fafafa' },
-  rowLabel: { fontSize: 13, color: '#888', flex: 1 },
-  rowValue: { fontSize: 13, fontWeight: '600', color: '#1a1a1a', flex: 1, textAlign: 'right' },
+  row:      { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 13, borderBottomWidth: 1, borderColor: '#333333' },
+  rowAlt:   { backgroundColor: '#222222' },
+  rowLabel: { fontSize: 13, color: '#888888', flex: 1 },
+  rowValue: { fontSize: 13, fontWeight: '600', color: '#FFFFFF', flex: 1, textAlign: 'right' },
 
   adminActions: {
     marginTop: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#1A1A1A',
     borderRadius: 14,
     padding: 16,
-    borderWidth: 1.5,
-    borderColor: '#FFE0E0',
-    shadowColor: '#E62B4A',
-    shadowOpacity: 0.06,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 6,
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: '#FFD700',
   },
-  adminTitle: { fontSize: 12, fontWeight: '800', color: '#C62828', marginBottom: 12, textTransform: 'uppercase', letterSpacing: 0.6 },
+  adminTitle: { fontSize: 12, fontWeight: '800', color: '#FFD700', marginBottom: 12, textTransform: 'uppercase', letterSpacing: 0.6 },
   actionRow: { flexDirection: 'row' },
 
   editBtn: {
-    backgroundColor: '#1a73e8',
+    backgroundColor: '#FFD700',
     borderRadius: 10, paddingVertical: 14, alignItems: 'center',
-    shadowColor: '#1a73e8', shadowOpacity: 0.25,
+    shadowColor: '#FFD700', shadowOpacity: 0.25,
     shadowOffset: { width: 0, height: 3 }, shadowRadius: 6, elevation: 3,
   },
-  editBtnText: { fontSize: 15, fontWeight: '700', color: '#fff' },
+  editBtnText: { fontSize: 15, fontWeight: '700', color: '#000000' },
 
   deleteBtn: {
     backgroundColor: '#E62B4A',
@@ -272,33 +262,32 @@ const styles = StyleSheet.create({
   },
   deleteBtnText: { fontSize: 15, fontWeight: '700', color: '#fff' },
 
-  confirmText: { fontSize: 12, fontWeight: '700', color: '#C62828', marginBottom: 6, textAlign: 'center' },
-  cancelBtn:   { borderRadius: 10, paddingVertical: 14, alignItems: 'center', backgroundColor: '#f0f0f0' },
-  cancelBtnText: { fontSize: 14, fontWeight: '700', color: '#555' },
+  confirmText: { fontSize: 12, fontWeight: '700', color: '#E62B4A', marginBottom: 6, textAlign: 'center' },
+  cancelBtn:   { borderRadius: 10, paddingVertical: 14, alignItems: 'center', backgroundColor: '#333333' },
+  cancelBtnText: { fontSize: 14, fontWeight: '700', color: '#FFFFFF' },
 
   deleteError: {
-    marginTop: 10, padding: 12, backgroundColor: '#FFF0F0',
+    marginTop: 10, padding: 12, backgroundColor: 'rgba(230, 43, 74, 0.1)',
     borderRadius: 8, borderLeftWidth: 4, borderLeftColor: '#E62B4A',
   },
-  deleteErrorText: { fontSize: 12, color: '#C62828' },
+  deleteErrorText: { fontSize: 12, color: '#E62B4A' },
 
   // ── Image Gallery ─────────────────────────────────────
   gallerySection: {
-    backgroundColor: '#fff', borderRadius: 14, padding: 14, marginBottom: 14,
-    shadowColor: '#000', shadowOpacity: 0.05, shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 6, elevation: 2,
+    backgroundColor: '#1A1A1A', borderRadius: 14, padding: 14, marginBottom: 14,
+    borderWidth: 1, borderColor: '#333333',
   },
-  sectionLabel: { fontSize: 12, fontWeight: '800', color: '#555', marginBottom: 10, textTransform: 'uppercase', letterSpacing: 0.5 },
+  sectionLabel: { fontSize: 12, fontWeight: '800', color: '#FFD700', marginBottom: 10, textTransform: 'uppercase', letterSpacing: 0.5 },
   galleryScroll: { flexDirection: 'row' },
   galleryImage:  { width: 160, height: 110, borderRadius: 10, marginRight: 10 },
 
   // ── Map button ────────────────────────────────────────
   mapBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    backgroundColor: '#1a73e8', borderRadius: 12, paddingVertical: 14,
+    backgroundColor: '#FFD700', borderRadius: 12, paddingVertical: 14,
     marginBottom: 14,
-    shadowColor: '#1a73e8', shadowOpacity: 0.3,
+    shadowColor: '#FFD700', shadowOpacity: 0.3,
     shadowOffset: { width: 0, height: 3 }, shadowRadius: 6, elevation: 3,
   },
-  mapBtnText: { fontSize: 15, fontWeight: '700', color: '#fff' },
+  mapBtnText: { fontSize: 15, fontWeight: '700', color: '#000000' },
 });

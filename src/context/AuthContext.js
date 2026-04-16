@@ -1,16 +1,30 @@
 // src/context/AuthContext.js
-// Provides: user, role, isAdmin, loading, login, logout
+// Provides: user, role, isAdmin, loading, googleLogin, logout
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
+import {
+  signOut,
+  onAuthStateChanged,
+  GoogleAuthProvider,
+  signInWithCredential,
+} from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../../firebaseConfig';
 
 const AuthContext = createContext(null);
 
+// ── Admin Whitelist ───────────────────────────────────────────────────────
+// Add email addresses here that should have full admin privileges.
+// All other users will receive "viewer" (read-only) access by default.
+const ADMIN_EMAILS = [
+  'admin@example.com',
+  'kirti.sharma@curefit.com',
+  'anirban@curefit.com',
+];
+
 export function AuthProvider({ children }) {
   const [user,    setUser]    = useState(null);
-  const [role,    setRole]    = useState(null);   // "admin" | "user"
+  const [role,    setRole]    = useState(null);   // "admin" | "viewer"
   const [loading, setLoading] = useState(true);
 
   // ── Listen for auth state changes ─────────────────────────────────────────
@@ -18,25 +32,26 @@ export function AuthProvider({ children }) {
     const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         setUser(firebaseUser);
+        
+        // Check if user is in admin whitelist
+        const userEmail = firebaseUser.email?.toLowerCase();
+        const isAdminEmail = ADMIN_EMAILS.includes(userEmail);
+        const assignedRole = isAdminEmail ? 'admin' : 'viewer';
+        
+        setRole(assignedRole);
+
+        // Optional: Sync with Firestore for tracking users
         try {
-          const ref  = doc(db, 'users', firebaseUser.uid);
-          const snap = await getDoc(ref);
-          if (snap.exists()) {
-            setRole(snap.data().role ?? 'user');
-          } else {
-            // First login — try to create user doc (may fail if rules block it)
-            try {
-              await setDoc(ref, { email: firebaseUser.email, role: 'user' });
-            } catch (_writeErr) {
-              // Rules block non-admins from writing — silently ignore, default to 'user'
-              console.log('[Auth] Could not create user doc (non-admin), defaulting to user role');
-            }
-            setRole('user');
-          }
-        } catch (e) {
-          // Firestore read failed — default to 'user' so login still works
-          console.warn('[Auth] Could not fetch user role:', e.message);
-          setRole('user');
+          const ref = doc(db, 'users', firebaseUser.uid);
+          await setDoc(ref, {
+            email: firebaseUser.email,
+            name: firebaseUser.displayName || '',
+            photoURL: firebaseUser.photoURL || '',
+            role: assignedRole, // Store the assigned role
+            lastLogin: new Date().toISOString(),
+          }, { merge: true });
+        } catch (_err) {
+          console.log('[Auth] Could not sync user doc, continuing with local role');
         }
       } else {
         setUser(null);
@@ -47,21 +62,22 @@ export function AuthProvider({ children }) {
     return unsub;
   }, []);
 
-  // ── Auth actions ──────────────────────────────────────────────────────────
-  const login = async (email, password) => {
-    await signInWithEmailAndPassword(auth, email, password);
-  };
 
-  const register = async (email, password, name = '') => {
-    const cred = await createUserWithEmailAndPassword(auth, email, password);
-    // Try to create user doc — may silently fail if rules block it
-    try {
-      await setDoc(doc(db, 'users', cred.user.uid), {
-        email,
-        name,
-        role: 'user',
+  // ── Auth Actions ─────────────────────────────────────────────────────────
+  const googleLogin = async (idToken, isGuest = false) => {
+    if (isGuest) {
+      setUser({
+        uid: 'guest-' + Math.random().toString(36).substr(2, 9),
+        email: 'guest@example.com',
+        displayName: 'Guest Viewer',
+        isAnonymous: true,
       });
-    } catch (_) {}
+      setRole('viewer');
+      return;
+    }
+
+    const credential = GoogleAuthProvider.credential(idToken);
+    await signInWithCredential(auth, credential);
   };
 
   const logout = async () => {
@@ -69,7 +85,14 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, role, isAdmin: role === 'admin', loading, login, register, logout }}>
+    <AuthContext.Provider value={{
+      user,
+      role,
+      isAdmin: role === 'admin',
+      loading,
+      googleLogin,
+      logout
+    }}>
       {children}
     </AuthContext.Provider>
   );

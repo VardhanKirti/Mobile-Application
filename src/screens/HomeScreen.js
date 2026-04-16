@@ -2,40 +2,43 @@
 import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, ScrollView,
-  Platform, StatusBar, TextInput, Alert,
+  Platform, StatusBar, TextInput, Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
+
+// Cultfit Logo
+const cultfitLogo = require('../../cultfit.jpg');
 
 const TILES = [
   {
     key: 'FS',
     label: 'FS',
     icon: 'store-outline',
-    color: '#E62B4A',
-    bg: '#FFF0F3',
+    color: '#FFD700',
+    bg: '#1A1A1A',
   },
   {
     key: 'EBD',
     label: 'EBD',
     icon: 'storefront-outline',
-    color: '#1a73e8',
-    bg: '#EBF3FF',
+    color: '#FFD700',
+    bg: '#1A1A1A',
   },
   {
     key: 'Warehouse',
     label: 'Warehouse',
     icon: 'warehouse',
-    color: '#F57C00',
-    bg: '#FFF3E0',
+    color: '#FFD700',
+    bg: '#1A1A1A',
   },
   {
     key: 'Office',
     label: 'Office',
     icon: 'office-building-outline',
-    color: '#2E7D32',
-    bg: '#E8F5E9',
+    color: '#FFD700',
+    bg: '#1A1A1A',
   },
 ];
 
@@ -53,20 +56,33 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <StatusBar barStyle="dark-content" backgroundColor="#f5f6fa" />
+      <StatusBar barStyle="light-content" backgroundColor="#000000" />
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
+        {/* ── Cultfit Logo Header ─────────────────────────────────────── */}
+        <View style={styles.logoHeader}>
+          <Image source={cultfitLogo} style={styles.logo} resizeMode="contain" />
+          <View style={styles.logoTextContainer}>
+            <Text style={styles.logoTitle}>Cultfit</Text>
+            <Text style={styles.logoSubtitle}>Properties</Text>
+          </View>
+          {isAdmin && (
+            <View style={styles.adminBadge}>
+              <Text style={styles.adminBadgeText}>ADMIN</Text>
+            </View>
+          )}
+        </View>
+
         {/* ── Header ─────────────────────────────────────── */}
         <View style={styles.header}>
           <View>
-            <Text style={styles.appBrand}>🏢 PropManager</Text>
-            {isAdmin && <Text style={styles.adminChip}>Admin</Text>}
+            <Text style={styles.appBrand}>🏢 Property Manager</Text>
           </View>
           <TouchableOpacity onPress={handleLogout} style={styles.avatarCircle}>
-            <MaterialIcons name="logout" size={18} color="#fff" />
+            <MaterialIcons name="logout" size={18} color="#000" />
           </TouchableOpacity>
         </View>
 
@@ -76,17 +92,17 @@ export default function HomeScreen({ navigation }) {
 
         {/* ── Search Bar ────────────────────────────────── */}
         <View style={styles.searchWrapper}>
-          <MaterialIcons name="search" size={20} color="#aaa" style={styles.searchIcon} />
+          <MaterialIcons name="search" size={20} color="#FFD700" style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
             placeholder="Search properties, cities, stores..."
-            placeholderTextColor="#bbb"
+            placeholderTextColor="#888"
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
           {searchQuery.length > 0 && (
             <TouchableOpacity onPress={() => setSearchQuery('')} style={styles.clearBtn}>
-              <MaterialIcons name="close" size={16} color="#aaa" />
+              <MaterialIcons name="close" size={16} color="#FFD700" />
             </TouchableOpacity>
           )}
         </View>
@@ -106,11 +122,11 @@ export default function HomeScreen({ navigation }) {
               }
               activeOpacity={0.8}
             >
-              <View style={[styles.iconCircle, { backgroundColor: tile.color + '22' }]}>
+              <View style={[styles.iconCircle, { backgroundColor: 'rgba(255, 215, 0, 0.15)' }]}>
                 <MaterialCommunityIcons
                   name={tile.icon}
                   size={32}
-                  color={tile.color}
+                  color="#FFD700"
                 />
               </View>
               <Text style={[styles.tileLabel, { color: tile.color }]}>{tile.label}</Text>
@@ -125,7 +141,7 @@ export default function HomeScreen({ navigation }) {
               {user?.email}
             </Text>
             <Text style={styles.userRole}>
-              {isAdmin ? '🔑 Admin' : '👤 Read-only user'}
+              {isAdmin ? '🔑 Admin Access' : '👤 Read-only Access'}
             </Text>
           </View>
           <TouchableOpacity
@@ -133,7 +149,7 @@ export default function HomeScreen({ navigation }) {
             onPress={handleLogout}
             activeOpacity={0.8}
           >
-            <MaterialIcons name="logout" size={16} color="#E62B4A" style={{ marginRight: 4 }} />
+            <MaterialIcons name="logout" size={16} color="#FFD700" style={{ marginRight: 4 }} />
             <Text style={styles.signOutText}>Sign Out</Text>
           </TouchableOpacity>
         </View>
@@ -146,11 +162,51 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: '#f5f6fa',
+    backgroundColor: '#000000',
     paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) : 0,
   },
   scroll: { flex: 1 },
   content: { padding: 20, paddingBottom: 40 },
+
+  // ── Logo Header ────────────────────────────────────
+  logoHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  logo: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+  },
+  logoTextContainer: {
+    marginLeft: 12,
+  },
+  logoTitle: {
+    fontSize: 24,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    letterSpacing: -0.5,
+  },
+  logoSubtitle: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#FFD700',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+  },
+  adminBadge: {
+    marginLeft: 'auto',
+    backgroundColor: '#FFD700',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  adminBadgeText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#000000',
+  },
 
   header: {
     flexDirection: 'row',
@@ -158,19 +214,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 22,
   },
-  appBrand: { fontSize: 16, fontWeight: '700', color: '#1a1a1a' },
-  adminChip: {
-    fontSize: 10, fontWeight: '800', color: '#92400E',
-    backgroundColor: '#FEF3C7', borderRadius: 4,
-    paddingHorizontal: 6, paddingVertical: 2,
-    alignSelf: 'flex-start', marginTop: 2,
-    overflow: 'hidden',
-  },
+  appBrand: { fontSize: 16, fontWeight: '700', color: '#FFFFFF' },
+
   avatarCircle: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#E62B4A',
+    backgroundColor: '#FFD700',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -178,33 +228,28 @@ const styles = StyleSheet.create({
   pageTitle: {
     fontSize: 24,
     fontWeight: '800',
-    color: '#1a1a1a',
+    color: '#FFFFFF',
     marginBottom: 4,
   },
-  subtitle: { fontSize: 13, color: '#888', marginBottom: 18 },
+  subtitle: { fontSize: 13, color: '#888888', marginBottom: 18 },
 
   // ── Search Bar ───────────────────────────────────────
   searchWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#1A1A1A',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#e0e0e0',
+    borderColor: '#333333',
     paddingHorizontal: 12,
     paddingVertical: Platform.OS === 'ios' ? 12 : 8,
     marginBottom: 24,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 6,
-    elevation: 2,
   },
   searchIcon: { marginRight: 8 },
   searchInput: {
     flex: 1,
     fontSize: 14,
-    color: '#1a1a1a',
+    color: '#FFFFFF',
     padding: 0,
     margin: 0,
   },
@@ -216,17 +261,13 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   tile: {
-    // Each tile takes ~half the width minus the gap in the middle
     width: '48%',
     borderRadius: 16,
     padding: 22,
     alignItems: 'center',
     marginBottom: 14,
-    shadowColor: '#000',
-    shadowOpacity: 0.06,
-    shadowOffset: { width: 0, height: 3 },
-    shadowRadius: 8,
-    elevation: 3,
+    borderWidth: 1,
+    borderColor: '#333333',
   },
   iconCircle: {
     width: 64,
@@ -246,19 +287,25 @@ const styles = StyleSheet.create({
   userCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#1A1A1A',
     borderRadius: 14,
     padding: 14,
     marginTop: 8,
-    shadowColor: '#000',
-    shadowOpacity: 0.04,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 6,
-    elevation: 1,
+    borderWidth: 1,
+    borderColor: '#333333',
   },
-  userEmail: { fontSize: 13, fontWeight: '600', color: '#333' },
-  userRole: { fontSize: 11, color: '#888', marginTop: 2 },
-  signOutBtn: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 8, backgroundColor: '#FFF0F0', borderWidth: 1, borderColor: '#FFD0D0' },
-  signOutText: { fontSize: 13, fontWeight: '700', color: '#E62B4A' },
+  userEmail: { fontSize: 13, fontWeight: '600', color: '#FFFFFF' },
+  userRole: { fontSize: 11, color: '#888888', marginTop: 2 },
+  signOutBtn: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    paddingHorizontal: 12, 
+    paddingVertical: 8, 
+    borderRadius: 8, 
+    backgroundColor: 'rgba(255, 215, 0, 0.1)', 
+    borderWidth: 1, 
+    borderColor: '#FFD700' 
+  },
+  signOutText: { fontSize: 13, fontWeight: '700', color: '#FFD700' },
 });
 

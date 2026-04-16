@@ -6,8 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { AuthProvider, useAuth } from './src/context/AuthContext';
-import LoginScreen        from './src/screens/LoginScreen';
-import RegisterScreen     from './src/screens/RegisterScreen';
+import GoogleAuthScreen   from './src/screens/GoogleAuthScreen';
 import HomeScreen         from './src/screens/HomeScreen';
 import DashboardScreen    from './src/screens/DashboardScreen';
 import StoreDetailScreen  from './src/screens/StoreDetailScreen';
@@ -21,19 +20,18 @@ function AppNavigator() {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f5f6fa' }}>
-        <ActivityIndicator size="large" color="#E62B4A" />
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#000000' }}>
+        <ActivityIndicator size="large" color="#FFD700" />
       </View>
     );
   }
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={user ? 'Home' : 'Login'}>
+    <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={user ? 'Home' : 'GoogleAuth'}>
       {!user ? (
         // ── Unauthenticated stack ──────────────────────────────────────────────
         <>
-          <Stack.Screen name="Login"    component={LoginScreen} />
-          <Stack.Screen name="Register" component={RegisterScreen} />
+          <Stack.Screen name="GoogleAuth" component={GoogleAuthScreen} />
         </>
       ) : (
         // ── Authenticated stack ────────────────────────────────────────────────

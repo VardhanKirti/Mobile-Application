@@ -19,7 +19,7 @@ export default function DashboardHeader({ title, showBack = false }) {
             style={styles.backBtn}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
-            <MaterialIcons name="arrow-back" size={22} color="#1a1a1a" />
+            <MaterialIcons name="arrow-back" size={22} color="#FFD700" />
           </TouchableOpacity>
         ) : (
           <View style={styles.backBtn} />
@@ -33,7 +33,7 @@ export default function DashboardHeader({ title, showBack = false }) {
 
 const styles = StyleSheet.create({
   safe: {
-    backgroundColor: '#fff',
+    backgroundColor: '#000000',
   },
   container: {
     flexDirection: 'row',
@@ -41,20 +41,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: Platform.OS === 'android' ? 12 : 4,
     paddingBottom: 12,
-    backgroundColor: '#fff',
+    backgroundColor: '#000000',
     borderBottomWidth: 1,
-    borderColor: '#eee',
-    shadowColor: '#000',
-    shadowOpacity: 0.04,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    elevation: 2,
+    borderColor: '#333333',
   },
   backBtn: {
     width: 38,
     height: 38,
     borderRadius: 19,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#1A1A1A',
+    borderWidth: 1,
+    borderColor: '#333333',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -63,7 +60,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 18,
     fontWeight: '700',
-    color: '#1a1a1a',
+    color: '#FFFFFF',
     letterSpacing: 0.3,
   },
 });

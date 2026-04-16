@@ -21,7 +21,7 @@ import {
 import { useAuth } from '../context/AuthContext';
 
 // ── Accent colours ────────────────────────────────────────────────────────────
-const COLOR = { FS: '#E62B4A', EBO: '#1a73e8' };
+const COLOR = { FS: '#FFD700', EBO: '#FFD700' };
 
 export default function DashboardScreen({ route, navigation }) {
   const { propertyType } = route.params;
@@ -337,9 +337,9 @@ export default function DashboardScreen({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: '#f5f6fa' },
+  screen: { flex: 1, backgroundColor: '#000000' },
   scroll: { flex: 1 },
-  content: { padding: 16, paddingBottom: 100 }, // extra bottom for FAB
+  content: { padding: 16, paddingBottom: 100 },
 
   fab: {
     position: 'absolute',
@@ -350,29 +350,26 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.25,
+    shadowColor: '#FFD700',
+    shadowOpacity: 0.3,
     shadowOffset: { width: 0, height: 4 },
     shadowRadius: 8,
     elevation: 6,
   },
 
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: '#1A1A1A',
     borderRadius: 14,
     padding: 14,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 6,
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: '#333333',
     marginBottom: 12,
   },
   row: { marginBottom: 12 },
 
   sectionLabel: {
     fontSize: 12,
-    color: '#888',
+    color: '#888888',
     fontWeight: '600',
     marginBottom: 8,
     textTransform: 'uppercase',
@@ -385,23 +382,23 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 8,
     borderWidth: 1.5,
-    borderColor: '#ddd',
-    backgroundColor: '#fff',
+    borderColor: '#444444',
+    backgroundColor: '#222222',
   },
-  toggleText: { fontSize: 14, color: '#444', fontWeight: '600' },
+  toggleText: { fontSize: 14, color: '#CCCCCC', fontWeight: '600' },
 
   searchBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f5f6fa',
+    backgroundColor: '#222222',
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 8,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: '#e8e8e8',
+    borderColor: '#444444',
   },
-  searchInput: { flex: 1, fontSize: 14, color: '#1a1a1a', paddingVertical: 0 },
+  searchInput: { flex: 1, fontSize: 14, color: '#FFFFFF', paddingVertical: 0 },
 
   storeItem: {
     flexDirection: 'row',
@@ -409,7 +406,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 12,
     borderBottomWidth: 1,
-    borderColor: '#f0f0f0',
+    borderColor: '#333333',
     borderRadius: 6,
     borderLeftWidth: 3,
     borderLeftColor: 'transparent',
@@ -419,28 +416,30 @@ const styles = StyleSheet.create({
     width: 48, height: 48, borderRadius: 8, marginRight: 10,
   },
   storeThumbnailEmpty: {
-    backgroundColor: '#f0f0f0', alignItems: 'center', justifyContent: 'center',
+    backgroundColor: '#333333', alignItems: 'center', justifyContent: 'center',
   },
-  storeText: { fontSize: 14, color: '#333', flex: 1 },
-  emptyText: { fontSize: 13, color: '#aaa', textAlign: 'center', paddingVertical: 20 },
+  storeText: { fontSize: 14, color: '#FFFFFF', flex: 1 },
+  emptyText: { fontSize: 13, color: '#666666', textAlign: 'center', paddingVertical: 20 },
 
   errorBox: {
-    backgroundColor: '#FFF0F0',
+    backgroundColor: 'rgba(230, 43, 74, 0.1)',
     borderRadius: 10,
     borderLeftWidth: 4,
     borderLeftColor: '#E62B4A',
     padding: 14,
     marginBottom: 10,
   },
-  errorTitle: { fontSize: 14, fontWeight: '700', color: '#C62828', marginBottom: 4 },
-  errorHint:  { fontSize: 12, color: '#888' },
+  errorTitle: { fontSize: 14, fontWeight: '700', color: '#E62B4A', marginBottom: 4 },
+  errorHint:  { fontSize: 12, color: '#888888' },
 
   emptyBox: {
-    backgroundColor: '#F8F8F8',
+    backgroundColor: '#1A1A1A',
     borderRadius: 10,
     padding: 20,
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#333333',
   },
-  emptyTitle: { fontSize: 15, fontWeight: '700', color: '#555', marginBottom: 6 },
-  emptyHint:  { fontSize: 12, color: '#999', textAlign: 'center' },
+  emptyTitle: { fontSize: 15, fontWeight: '700', color: '#FFFFFF', marginBottom: 6 },
+  emptyHint:  { fontSize: 12, color: '#888888', textAlign: 'center' },
 });
