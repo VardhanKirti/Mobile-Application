@@ -5,62 +5,80 @@ import {
   Alert
 } from 'react-native';
 import { useAuth } from '../context/AuthContext';
+
+// Native Google Sign In
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+
+// Web Google Sign In
+import * as Google from 'expo-auth-session/providers/google';
+import * as WebBrowser from 'expo-web-browser';
 
 // Import Cultfit logo
 const cultfitLogo = require('../../cultfit.jpg');
+
+WebBrowser.maybeCompleteAuthSession();
 
 export default function GoogleAuthScreen() {
   const { googleLogin } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // INDUSTRY STANDARD: Use the Web Client ID for configuration
   const WEB_CLIENT_ID = '680180840921-bf7fdo87i3secg5dbkris5uhkfj7ped8.apps.googleusercontent.com';
 
+  // 🌐 Web Auth Hook
+  const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
+    clientId: WEB_CLIENT_ID,
+  });
+
+  // 📱 Initialize Native Auth
   useEffect(() => {
-    GoogleSignin.configure({
-      webClientId: WEB_CLIENT_ID,
-      offlineAccess: true,
-      forceCodeForRefreshToken: true,
-    });
+    if (Platform.OS !== 'web') {
+      GoogleSignin.configure({
+        webClientId: WEB_CLIENT_ID,
+        offlineAccess: true,
+      });
+    }
   }, []);
 
-  const handleSignIn = async () => {
+  // 🌐 Handle Web Response
+  useEffect(() => {
+    if (Platform.OS === 'web' && response?.type === 'success') {
+      const { id_token } = response.params;
+      handleGoogleLogin(id_token);
+    }
+  }, [response]);
+
+  const handleGoogleLogin = async (idToken) => {
     try {
       setLoading(true);
       setError(null);
-      
-      // Check if Google Play Services are available
-      await GoogleSignin.hasPlayServices();
-      
-      // Open the NATIVE account picker
-      const userInfo = await GoogleSignin.signIn();
-      const idToken = userInfo.data.idToken;
-
-      if (!idToken) {
-        throw new Error('No ID Token received from Google');
-      }
-
-      // Pass the token to our AuthContext (Firebase)
       await googleLogin(idToken);
-      
     } catch (e) {
-      console.error('[Native Google Error]', e);
-      let errorMsg = 'Google Sign-In failed.';
-      
-      if (e.code === 'SIGN_IN_CANCELLED') {
-        errorMsg = 'Sign-in cancelled.';
-      } else if (e.code === 'IN_PROGRESS') {
-        errorMsg = 'Sign-in already in progress.';
-      } else if (e.code === 'PLAY_SERVICES_NOT_AVAILABLE') {
-        errorMsg = 'Google Play Services not available.';
-      } else {
-        errorMsg = `Error: ${e.message}`;
-      }
-      
-      setError(errorMsg);
+      console.error('[Firebase Login Error]', e);
+      setError('Firebase failed to verify token.');
     } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSignIn = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      if (Platform.OS === 'web') {
+        // --- Web Flow ---
+        await promptAsync();
+      } else {
+        // --- Native Flow (APK) ---
+        await GoogleSignin.hasPlayServices();
+        const userInfo = await GoogleSignin.signIn();
+        const idToken = userInfo.data.idToken;
+        await handleGoogleLogin(idToken);
+      }
+    } catch (e) {
+      console.error('[Google Sign-In Error]', e);
+      setError(`Login failed: ${e.message}`);
       setLoading(false);
     }
   };

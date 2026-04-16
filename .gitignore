@@ -43,3 +43,23 @@ yarn-error.*
 # Firebase service account keys — NEVER commit these
 migration/serviceAccountKey.json
 **/serviceAccountKey.json
+
+# Firebase configuration files (contain API keys)
+google-services.json
+GoogleService-Info.plist
+
+# Environment variables
+.env
+.env.local
+.env.production
+.env.development
+
+# Secrets and keys
+*.secret
+secrets/
+config/secrets.js
+
+# Build artifacts
+*.aab
+*.apk
+*.ipa
